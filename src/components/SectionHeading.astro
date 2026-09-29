@@ -1,0 +1,68 @@
+---
+interface Props {
+  label?: string;
+  headline: string;
+  /** Teil der Headline, der grün hervorgehoben wird */
+  highlight?: string;
+  text?: string;
+  align?: 'left' | 'center';
+  dark?: boolean;
+  /** Überschriften-Ebene, Standard h2 */
+  as?: 'h1' | 'h2' | 'h3';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  label,
+  headline,
+  highlight,
+  text,
+  align = 'left',
+  dark = false,
+  as: Tag = 'h2',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+// Headline in drei Teile zerlegen, um das Highlight-Wort grün zu setzen
+let pre = headline;
+let mid = '';
+let post = '';
+if (highlight) {
+  const i = headline.indexOf(highlight);
+  if (i !== -1) {
+    pre = headline.slice(0, i);
+    mid = highlight;
+    post = headline.slice(i + highlight.length);
+  }
+}
+
+const alignment = align === 'center' ? 'text-center items-center mx-auto' : '';
+---
+
+<div class={`flex flex-col gap-4 ${alignment} ${className}`} {...rest}>
+  {
+    label && (
+      <span class={`pill-label self-start ${align === 'center' ? 'self-center' : ''} ${dark ? 'pill-label--dark' : ''}`}>
+        {label}
+      </span>
+    )
+  }
+  <Tag
+    class={`font-display font-extrabold tracking-tight text-balance ${
+      Tag === 'h1'
+        ? 'text-[2.35rem] leading-[1.06] sm:text-5xl lg:text-[4rem]'
+        : 'text-[1.9rem] leading-[1.12] sm:text-4xl lg:text-[2.9rem]'
+    } ${dark ? 'text-white' : 'text-ink-900'}`}
+  >
+    {pre}{mid && <span class="text-brand-500">{mid}</span>}{post}
+  </Tag>
+  {
+    text && (
+      <p class={`max-w-2xl text-base leading-relaxed sm:text-lg ${dark ? 'text-white/75' : 'text-ink-500'} ${align === 'center' ? 'mx-auto' : ''}`}>
+        {text}
+      </p>
+    )
+  }
+</div>

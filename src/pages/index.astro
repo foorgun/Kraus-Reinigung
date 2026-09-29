@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import TrustBar from '@/components/TrustBar.astro';
+import ServicesSection from '@/components/ServicesSection.astro';
+import MethodSection from '@/components/MethodSection.astro';
+import BeforeAfterGallery from '@/components/BeforeAfterGallery.astro';
+import AboutSection from '@/components/AboutSection.astro';
+import PromoBanner from '@/components/PromoBanner.astro';
+import Guarantees from '@/components/Guarantees.astro';
+import Reviews from '@/components/Reviews.astro';
+import Faq from '@/components/Faq.astro';
+import ContactSection from '@/components/ContactSection.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import { features } from '@/config/features';
+import { faqs } from '@/content/faq';
+import { faqSchema } from '@/lib/schema';
+
+const title =
+  'KRAUS Bad Hersfeld – Dachreinigung, Fassadenreinigung & Steinreinigung';
+const description =
+  'Dachreinigung, Fassadenreinigung, Steinreinigung und Pflasterarbeiten aus Bad Hersfeld – schonend ohne aggressive Chemie, mit Nano-Langzeitschutz. Kostenlose Beratung vor Ort, bundesweit tätig. ☎ 0172 / 7821 700';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schemas={[faqSchema(faqs)]}
+>
+  <Hero />
+  <TrustBar />
+  <ServicesSection />
+  <MethodSection />
+  {features.showBeforeAfter && <BeforeAfterGallery />}
+  <AboutSection />
+  <PromoBanner />
+  <Guarantees />
+  <Reviews />
+  <Faq />
+  <ContactSection />
+  <CtaBand />
+</BaseLayout>

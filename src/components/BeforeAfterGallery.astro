@@ -1,0 +1,39 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import BeforeAfterSlider from './BeforeAfterSlider.astro';
+import Icon from './Icon.astro';
+import { beforeAfterPairs } from '@/content/beforeAfter';
+import { beforeAfterSection } from '@/content/home';
+---
+
+<section id="vorher-nachher" class="scroll-mt-28 bg-ink-50 py-20 sm:py-28">
+  <div class="container-page">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        label={beforeAfterSection.label}
+        headline={beforeAfterSection.headline}
+        highlight="sofort sichtbar"
+        text={beforeAfterSection.text}
+        class="max-w-2xl"
+        data-reveal
+      />
+      <p
+        class="inline-flex shrink-0 items-center gap-2 rounded-full border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-600"
+      >
+        <Icon name="sliders" class="h-4 w-4 text-brand-500" />
+        Regler ziehen oder Pfeiltasten nutzen
+      </p>
+    </div>
+
+    <!-- TODO: echte Daten vom Kunden – Platzhalterbilder durch eigene Projektfotos ersetzen -->
+    <div class="mt-12 grid gap-8 lg:grid-cols-2 lg:gap-10">
+      {
+        beforeAfterPairs.map((pair, i) => (
+          <div data-reveal style={`--reveal-delay: ${(i % 2) * 90}ms`}>
+            <BeforeAfterSlider pair={pair} start={i % 2 === 0 ? 45 : 55} />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

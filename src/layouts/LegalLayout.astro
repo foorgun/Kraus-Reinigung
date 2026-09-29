@@ -1,0 +1,128 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  headline: string;
+  label: string;
+  /** Datum der letzten Aktualisierung, z. B. "September 2026" */
+  updated?: string;
+}
+
+const { title, description, headline, label, updated } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} noindex hideStickyBar>
+  <section class="pb-10 pt-32 sm:pt-40">
+    <div class="container-page">
+      <nav aria-label="Brotkrumennavigation" class="mb-7">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-ink-400">
+          <li><a href="/" class="transition hover:text-ink-700">Startseite</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-ink-700" aria-current="page">{label}</li>
+        </ol>
+      </nav>
+
+      <span class="pill-label">{label}</span>
+      <h1 class="mt-5 font-display text-4xl font-extrabold text-ink-900 sm:text-5xl">
+        {headline}
+      </h1>
+      {
+        updated && (
+          <p class="mt-4 text-sm text-ink-400">Stand: {updated}</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="pb-24">
+    <div class="container-page">
+      <div class="legal-prose max-w-3xl">
+        <slot />
+      </div>
+
+      <aside
+        class="mt-14 flex max-w-3xl items-start gap-3 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900"
+      >
+        <Icon name="shield" class="mt-0.5 h-5 w-5 shrink-0" />
+        <div>
+          <strong class="font-semibold">Hinweis für die Redaktion</strong>
+          <p class="mt-1">
+            Diese Seite enthält Platzhalter. Die verbindlichen Inhalte müssen vom
+            Kunden bzw. dessen Rechtsberatung geliefert und geprüft werden,
+            bevor die Website online geht. Diese Seite ist derzeit auf
+            <code class="rounded bg-amber-100 px-1 py-0.5">noindex</code> gesetzt.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-prose :global(h2) {
+    margin-top: 2.75rem;
+    margin-bottom: 0.875rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-ink-900);
+  }
+
+  .legal-prose :global(h3) {
+    margin-top: 2rem;
+    margin-bottom: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-ink-900);
+  }
+
+  .legal-prose :global(p) {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+    color: var(--color-ink-600);
+  }
+
+  .legal-prose :global(ul) {
+    margin-bottom: 1rem;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+
+  .legal-prose :global(li) {
+    margin-bottom: 0.45rem;
+    line-height: 1.7;
+    color: var(--color-ink-600);
+  }
+
+  .legal-prose :global(a) {
+    color: var(--color-brand-600);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .legal-prose :global(address) {
+    margin-bottom: 1rem;
+    font-style: normal;
+    line-height: 1.75;
+    color: var(--color-ink-600);
+  }
+
+  .legal-prose :global(strong) {
+    color: var(--color-ink-800);
+    font-weight: 600;
+  }
+
+  /* Platzhalter deutlich sichtbar markieren */
+  .legal-prose :global(.platzhalter) {
+    display: inline-block;
+    border-radius: 0.375rem;
+    background: #fef3c7;
+    padding: 0.05rem 0.4rem;
+    font-weight: 600;
+    color: #78350f;
+  }
+</style>

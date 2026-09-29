@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Rechtsseiten sind zusätzlich per Meta-Tag auf noindex gesetzt,
+# solange sie Platzhalter enthalten.
+
+Sitemap: https://www.kraus-reinigung.de/sitemap-index.xml

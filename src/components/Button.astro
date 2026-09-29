@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from './Icon.astro';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'outline' | 'outline-light' | 'ghost' | 'white';
+  size?: 'md' | 'lg';
+  icon?: IconName;
+  class?: string;
+  /** Für externe Links / tel:-Links kein rel nötig, aber steuerbar */
+  ariaLabel?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  icon,
+  class: className = '',
+  ariaLabel,
+} = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-2 rounded-full font-semibold transition duration-300 focus-visible:outline-offset-2 whitespace-nowrap';
+
+const sizes = {
+  md: 'px-5 py-3 text-[0.9375rem]',
+  lg: 'px-6 py-3.5 text-base sm:px-7 sm:py-4',
+};
+
+const variants = {
+  primary:
+    'bg-brand-500 text-white shadow-pill hover:bg-brand-600 hover:-translate-y-0.5 active:translate-y-0',
+  outline:
+    'border border-ink-300 text-ink-900 bg-white/60 hover:bg-white hover:border-ink-400 hover:-translate-y-0.5',
+  'outline-light':
+    'border border-white/50 text-white hover:bg-white/12 hover:border-white hover:-translate-y-0.5',
+  white:
+    'bg-white text-ink-900 shadow-pill hover:bg-ink-50 hover:-translate-y-0.5',
+  ghost: 'text-ink-700 hover:text-brand-600',
+};
+---
+
+<a
+  href={href}
+  aria-label={ariaLabel}
+  class={`${base} ${sizes[size]} ${variants[variant]} ${className}`}
+>
+  <slot />
+  {icon && <Icon name={icon} class="w-[1.05em] h-[1.05em] shrink-0" />}
+</a>

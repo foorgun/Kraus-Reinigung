@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PLATZHALTER-LOGO
+  TODO: echte Daten vom Kunden – durch das Original-Logo ersetzen.
+  Gleiche Datei, gleicher Name: /public/logo.svg (Dunkelversion für helle Flächen)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" width="260" height="64" role="img" aria-label="KRAUS – Bundesweit unterwegs">
+  <title>KRAUS – Bundesweit unterwegs</title>
+  <g>
+    <rect x="0" y="8" width="48" height="48" rx="14" fill="#3A8F3C"/>
+    <path d="M16 22v20M16 32l11-10M16 32l12 10" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <text x="62" y="37" font-family="'Plus Jakarta Sans','Inter',system-ui,sans-serif" font-size="27" font-weight="800" letter-spacing="1.5" fill="#171B21">KRAUS</text>
+    <text x="63" y="51" font-family="'Inter',system-ui,sans-serif" font-size="10.5" font-weight="600" letter-spacing="1.1" fill="#3A8F3C">BUNDESWEIT UNTERWEGS</text>
+  </g>
+</svg>

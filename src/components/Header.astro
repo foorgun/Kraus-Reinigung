@@ -1,0 +1,259 @@
+---
+import Icon from './Icon.astro';
+import { site, mainNav } from '@/config/site';
+import { features } from '@/config/features';
+
+// Einträge ausblenden, deren Zielsektion gar nicht gerendert wird
+const navItems = mainNav.filter(
+  (item) => !('requiresBeforeAfter' in item && item.requiresBeforeAfter) || features.showBeforeAfter
+);
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href.startsWith('/#') ? false : path === href || path === `${href}/`;
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-0 z-50">
+  <div class="container-page">
+    <nav
+      id="site-nav"
+      aria-label="Hauptnavigation"
+      class="pointer-events-auto mt-3 flex items-center gap-3 rounded-full border border-white/60 bg-white/85 px-3 py-2 shadow-pill backdrop-blur-xl transition-all duration-300 sm:mt-4 sm:px-4 lg:gap-6 lg:px-5"
+    >
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex shrink-0 items-center gap-2.5 rounded-full py-1 pl-1 pr-2"
+        aria-label={`${site.name} – zur Startseite`}
+      >
+        <img
+          src="/logo.svg"
+          alt=""
+          width="132"
+          height="34"
+          class="h-[26px] w-auto sm:h-[30px]"
+          fetchpriority="high"
+        />
+        <span class="sr-only">{site.name} – {site.tagline}</span>
+      </a>
+
+      <!-- Desktop-Navigation -->
+      <ul class="ml-auto hidden items-center gap-1 lg:flex">
+        {
+          navItems.map((item) =>
+            'children' in item && item.children ? (
+              <li class="group relative">
+                <a
+                  href={item.href}
+                  class="flex items-center gap-1 rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-ink-700 transition hover:bg-ink-50 hover:text-ink-900"
+                  aria-haspopup="true"
+                >
+                  {item.label}
+                  <Icon name="chevron-down" class="h-4 w-4 transition group-hover:rotate-180" stroke={2} />
+                </a>
+                <div class="invisible absolute left-0 top-full w-72 translate-y-1 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                  <ul class="overflow-hidden rounded-3xl border border-ink-100 bg-white p-2 shadow-lift">
+                    {item.children.map((child) => (
+                      <li>
+                        <a
+                          href={child.href}
+                          class="flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-[0.9375rem] font-medium text-ink-700 transition hover:bg-ink-50 hover:text-brand-600"
+                          aria-current={isActive(child.href) ? 'page' : undefined}
+                        >
+                          {child.label}
+                          <Icon name="arrow-up-right" class="h-4 w-4 text-ink-300" />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </li>
+            ) : (
+              <li>
+                <a
+                  href={item.href}
+                  class="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-ink-700 transition hover:bg-ink-50 hover:text-ink-900"
+                >
+                  {item.label}
+                </a>
+              </li>
+            )
+          )
+        }
+      </ul>
+
+      <!-- Telefon + CTA (Desktop) -->
+      <div class="ml-auto hidden items-center gap-2 lg:ml-0 lg:flex">
+        <a
+          href={site.phone.href}
+          class="flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.9375rem] font-semibold text-ink-900 transition hover:bg-ink-50"
+        >
+          <Icon name="phone" class="h-4 w-4 text-brand-500" />
+          <span class="hidden xl:inline">{site.phone.display}</span>
+          <span class="xl:hidden">Anrufen</span>
+        </a>
+        <a
+          href="/#kontakt"
+          class="rounded-full bg-brand-500 px-5 py-2.5 text-[0.9375rem] font-semibold text-white shadow-sm transition hover:bg-brand-600"
+        >
+          Angebot anfordern
+        </a>
+      </div>
+
+      <!-- Mobile: Anruf-Icon + Burger -->
+      <div class="ml-auto flex items-center gap-1.5 lg:hidden">
+        <a
+          href={site.phone.href}
+          class="grid h-10 w-10 place-items-center rounded-full bg-brand-500 text-white transition hover:bg-brand-600"
+          aria-label={`Anrufen: ${site.phone.display}`}
+        >
+          <Icon name="phone" class="h-[18px] w-[18px]" />
+        </a>
+        <button
+          type="button"
+          id="nav-toggle"
+          class="grid h-10 w-10 place-items-center rounded-full border border-ink-200 text-ink-900 transition hover:bg-ink-50"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="Menü öffnen"
+        >
+          <Icon name="menu" class="h-5 w-5" />
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile-Menü -->
+  <div
+    id="mobile-menu"
+    hidden
+    class="pointer-events-auto fixed inset-0 z-[60] lg:hidden"
+  >
+    <div id="mobile-backdrop" class="absolute inset-0 bg-ink-900/50 backdrop-blur-sm"></div>
+    <div
+      class="absolute inset-x-3 top-3 max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-4xl bg-white p-5 shadow-lift"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation"
+    >
+      <div class="flex items-center justify-between">
+        <img src="/logo.svg" alt={site.name} width="132" height="34" class="h-7 w-auto" />
+        <button
+          type="button"
+          id="nav-close"
+          class="grid h-10 w-10 place-items-center rounded-full border border-ink-200 text-ink-900"
+          aria-label="Menü schließen"
+        >
+          <Icon name="close" class="h-5 w-5" />
+        </button>
+      </div>
+
+      <ul class="mt-6 flex flex-col gap-1">
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="block rounded-2xl px-4 py-3 font-display text-lg font-bold text-ink-900 transition hover:bg-ink-50"
+                data-nav-link
+              >
+                {item.label}
+              </a>
+              {'children' in item && item.children && (
+                <ul class="mb-2 ml-4 flex flex-col gap-0.5 border-l border-ink-100 pl-3">
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        href={child.href}
+                        class="block rounded-xl px-3 py-2 text-[0.9375rem] text-ink-600 transition hover:bg-ink-50 hover:text-brand-600"
+                        data-nav-link
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-6 flex flex-col gap-2.5 border-t border-ink-100 pt-5">
+        <a
+          href="/#kontakt"
+          data-nav-link
+          class="flex items-center justify-center gap-2 rounded-full bg-brand-500 px-6 py-3.5 font-semibold text-white"
+        >
+          Angebot anfordern
+        </a>
+        <a
+          href={site.phone.href}
+          class="flex items-center justify-center gap-2 rounded-full border border-ink-200 px-6 py-3.5 font-semibold text-ink-900"
+        >
+          <Icon name="phone" class="h-[18px] w-[18px] text-brand-500" />
+          {site.phone.display}
+        </a>
+        <p class="mt-1 text-center text-sm text-ink-400">
+          Mo.–Sa. 7:00–19:00 Uhr
+        </p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Abstandhalter, damit der Inhalt nicht unter der fixierten Navigation liegt -->
+<div aria-hidden="true" class="h-0"></div>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const closeBtn = document.getElementById('nav-close');
+  const menu = document.getElementById('mobile-menu');
+  const backdrop = document.getElementById('mobile-backdrop');
+  const nav = document.getElementById('site-nav');
+
+  function openMenu() {
+    if (!menu || !toggle) return;
+    menu.hidden = false;
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    menu.querySelector<HTMLElement>('#nav-close')?.focus();
+  }
+
+  function closeMenu() {
+    if (!menu || !toggle) return;
+    menu.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  toggle?.addEventListener('click', () =>
+    menu?.hidden ? openMenu() : closeMenu()
+  );
+  closeBtn?.addEventListener('click', closeMenu);
+  backdrop?.addEventListener('click', closeMenu);
+  document
+    .querySelectorAll('[data-nav-link]')
+    .forEach((link) => link.addEventListener('click', closeMenu));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu && !menu.hidden) {
+      closeMenu();
+      toggle?.focus();
+    }
+  });
+
+  // Navigation beim Scrollen leicht verdichten
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      nav?.classList.toggle('!bg-white', window.scrollY > 24);
+      nav?.classList.toggle('shadow-lift', window.scrollY > 24);
+      ticking = false;
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>

@@ -1,0 +1,60 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { reviews, reviewsSection } from '@/content/reviews';
+import { features } from '@/config/features';
+
+/**
+ * Bewertungs-Sektion.
+ * Standardmäßig ausgeblendet (features.showReviews = false) und wird erst
+ * ausgegeben, wenn echte Google-Bewertungen in src/content/reviews.ts stehen.
+ * Es werden bewusst keine Bewertungen oder Sterne erfunden.
+ */
+const visible = features.showReviews && reviews.length > 0;
+---
+
+{
+  visible && (
+    <section id="bewertungen" class="scroll-mt-28 bg-ink-50 py-20 sm:py-28">
+      <div class="container-page">
+        <SectionHeading
+          label={reviewsSection.label}
+          headline={reviewsSection.headline}
+          text={reviewsSection.text}
+          align="center"
+          class="max-w-2xl"
+          data-reveal
+        />
+
+        <ul class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {reviews.map((review, i) => (
+            <li
+              class="flex flex-col gap-4 rounded-4xl border border-ink-100 bg-white p-6 shadow-soft"
+              data-reveal
+              style={`--reveal-delay: ${i * 70}ms`}
+            >
+              <div class="flex gap-0.5" aria-label={`${review.rating} von 5 Sternen`}>
+                {Array.from({ length: 5 }).map((_, s) => (
+                  <span
+                    aria-hidden="true"
+                    class={s < review.rating ? 'text-brand-500' : 'text-ink-200'}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <blockquote class="flex-1 text-[0.95rem] leading-relaxed text-ink-600">
+                „{review.quote}“
+              </blockquote>
+              <footer class="text-sm text-ink-400">
+                <span class="font-semibold text-ink-800">{review.author}</span>
+                {' · '}
+                {review.location}
+                {review.service && <span> · {review.service}</span>}
+              </footer>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

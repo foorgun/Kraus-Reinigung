@@ -1,0 +1,152 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import MobileStickyBar from '@/components/MobileStickyBar.astro';
+import { site } from '@/config/site';
+import { features } from '@/config/features';
+import { localBusinessSchema, websiteSchema } from '@/lib/schema';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Pfad zum Open-Graph-Bild, relativ zur Domain */
+  ogImage?: string;
+  noindex?: boolean;
+  /** Zusätzliche JSON-LD-Knoten dieser Seite */
+  schemas?: Record<string, unknown>[];
+  /** Sticky-Leiste auf Mobil ausblenden (z. B. auf Rechtsseiten) */
+  hideStickyBar?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogImage = '/images/og-default.jpg',
+  noindex = false,
+  schemas = [],
+  hideStickyBar = false,
+} = Astro.props;
+
+const origin = Astro.site ? Astro.site.origin : '';
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', Astro.site ?? 'http://localhost').href;
+const ogImageUrl = new URL(ogImage, Astro.site ?? 'http://localhost').href;
+
+const jsonLd = [
+  localBusinessSchema(origin),
+  websiteSchema(origin),
+  ...schemas,
+];
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#3a8f3c" />
+    <meta name="author" content={site.name} />
+    <meta name="geo.region" content="DE-HE" />
+    <meta name="geo.placename" content={site.address.city} />
+
+    <!-- Favicon & App-Icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Schriften lokal vorladen (kein externes CDN) -->
+    <link
+      rel="preload"
+      href="/fonts/inter-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/plus-jakarta-sans-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={`${site.name} – ${site.tagline}`} />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} – ${site.tagline}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Strukturierte Daten -->
+    {
+      jsonLd.map((node) => (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(node)}
+        />
+      ))
+    }
+  </head>
+
+  <body class="bg-white antialiased">
+    <a
+      href="#inhalt"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-500 focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-white"
+    >
+      Zum Inhalt springen
+    </a>
+
+    <Header />
+
+    <main id="inhalt">
+      <slot />
+    </main>
+
+    <Footer />
+
+    {features.showMobileStickyBar && !hideStickyBar && <MobileStickyBar />}
+
+    <script>
+      // ---- Scroll-Reveal -------------------------------------------------
+      // Elemente mit [data-reveal] werden beim Eintreten sanft eingeblendet.
+      const prefersReduced = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
+      const revealTargets =
+        document.querySelectorAll<HTMLElement>('[data-reveal]');
+
+      if (prefersReduced || !('IntersectionObserver' in window)) {
+        revealTargets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+        );
+        revealTargets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

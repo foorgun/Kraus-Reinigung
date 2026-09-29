@@ -1,0 +1,18 @@
+dist/
+.output/
+node_modules/
+.astro/
+.env
+.env.production
+.DS_Store
+npm-debug.log*
+.vercel
+.netlify
+
+# Stockfoto-Originale.
+# Bewusst ausgeschlossen, weil das Repository öffentlich ist: Die gängigen
+# Stock-Lizenzen erlauben die Nutzung auf der Website, aber nicht die
+# Weitergabe der Originaldateien. Die daraus erzeugten, zugeschnittenen
+# Web-Bilder liegen in public/images/ und sind mit im Repo.
+# Sollen die Originale doch mit hinein: diese Zeile entfernen.
+neue-bilder/

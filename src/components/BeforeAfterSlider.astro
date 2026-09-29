@@ -1,0 +1,144 @@
+---
+import Icon from './Icon.astro';
+import type { BeforeAfterPair } from '@/content/beforeAfter';
+
+interface Props {
+  pair: BeforeAfterPair;
+  /** Startposition des Reglers in Prozent */
+  start?: number;
+  class?: string;
+}
+
+const { pair, start = 50, class: className = '' } = Astro.props;
+const id = `ba-${pair.id}`;
+---
+
+<figure class={`m-0 ${className}`}>
+  <div
+    class="ba-slider group relative aspect-[16/10] w-full touch-pan-y select-none overflow-hidden rounded-4xl bg-ink-100 shadow-soft"
+    data-ba
+    style={`--pos: ${start}%`}
+  >
+    <!-- Nachher (Hintergrund, vollflächig) -->
+    <img
+      src={pair.after}
+      alt={pair.altAfter}
+      width="1600"
+      height="1000"
+      loading="lazy"
+      decoding="async"
+      draggable="false"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+
+    <!-- Vorher (wird per clip-path beschnitten) -->
+    <div
+      class="absolute inset-0"
+      data-ba-clip
+      style="clip-path: inset(0 calc(100% - var(--pos)) 0 0)"
+    >
+      <img
+        src={pair.before}
+        alt={pair.altBefore}
+        width="1600"
+        height="1000"
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    </div>
+
+    <!-- Beschriftungen -->
+    <span
+      class="pointer-events-none absolute left-4 top-4 rounded-full bg-ink-900/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur"
+      >Vorher</span
+    >
+    <span
+      class="pointer-events-none absolute right-4 top-4 rounded-full bg-brand-500 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white"
+      >Nachher</span
+    >
+
+    <!-- Trennlinie + Griff -->
+    <div
+      class="pointer-events-none absolute inset-y-0 w-0.5 bg-white/90 shadow-[0_0_14px_rgba(0,0,0,0.35)]"
+      data-ba-line
+      style="left: var(--pos); transform: translateX(-50%)"
+    >
+    </div>
+
+    <!-- Bedienelement: gleichzeitig Drag-Griff und echter Slider (Tastatur/Screenreader) -->
+    <input
+      type="range"
+      id={id}
+      min="0"
+      max="100"
+      step="0.5"
+      value={start}
+      data-ba-input
+      class="absolute inset-0 h-full w-full touch-pan-y cursor-ew-resize appearance-none bg-transparent focus-visible:outline-none [&::-moz-range-thumb]:h-full [&::-moz-range-thumb]:w-12 [&::-moz-range-thumb]:cursor-ew-resize [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-transparent [&::-webkit-slider-thumb]:h-[300px] [&::-webkit-slider-thumb]:w-12 [&::-webkit-slider-thumb]:cursor-ew-resize [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-transparent"
+      aria-label={`Vergleich ${pair.title}: Regler verschieben, um Vorher und Nachher zu vergleichen`}
+    />
+
+    <span
+      class="pointer-events-none absolute top-1/2 grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[3px] border-white bg-brand-500 text-white shadow-lift transition group-focus-within:ring-4 group-focus-within:ring-white/60"
+      data-ba-handle
+      style="left: var(--pos)"
+    >
+      <Icon name="sliders" class="h-5 w-5" stroke={2.2} />
+    </span>
+  </div>
+
+  <figcaption class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+    <span class="font-display text-base font-bold text-ink-900">{pair.title}</span>
+    <span class="text-ink-300" aria-hidden="true">·</span>
+    <span class="text-sm text-ink-500">{pair.category}</span>
+  </figcaption>
+</figure>
+
+<script>
+  // Vorher/Nachher-Vergleich: Ziehen mit Maus/Finger, Bedienung per Tastatur
+  // über den nativen Range-Input (Pfeiltasten, Home/End).
+  document.querySelectorAll<HTMLElement>('[data-ba]').forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>('[data-ba-input]');
+    if (!input) return;
+
+    const apply = (value: number) => {
+      const clamped = Math.min(100, Math.max(0, value));
+      root.style.setProperty('--pos', `${clamped}%`);
+    };
+
+    input.addEventListener('input', () => apply(Number(input.value)));
+
+    // Direktes Ziehen irgendwo im Bild (nicht nur auf dem Thumb)
+    let dragging = false;
+
+    const positionFromEvent = (clientX: number) => {
+      const rect = root.getBoundingClientRect();
+      const pct = ((clientX - rect.left) / rect.width) * 100;
+      const clamped = Math.min(100, Math.max(0, pct));
+      input.value = String(clamped);
+      apply(clamped);
+    };
+
+    root.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      root.setPointerCapture(e.pointerId);
+      positionFromEvent(e.clientX);
+    });
+
+    root.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      positionFromEvent(e.clientX);
+    });
+
+    const stop = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      if (root.hasPointerCapture(e.pointerId)) root.releasePointerCapture(e.pointerId);
+    };
+
+    root.addEventListener('pointerup', stop);
+    root.addEventListener('pointercancel', stop);
+  });
+</script>

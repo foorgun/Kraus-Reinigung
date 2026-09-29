@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+import { site } from '@/config/site';
+
+interface Props {
+  headline?: string;
+  text?: string;
+  class?: string;
+}
+
+const {
+  headline = 'Lassen Sie uns vorbeikommen',
+  text = 'Kostenlose Beratung vor Ort, kostenlose Probefläche und ein unverbindliches Angebot. Termin nach Ihrem Wunsch – auch samstags.',
+  class: className = '',
+} = Astro.props;
+---
+
+<section class={`py-6 sm:py-10 ${className}`}>
+  <div class="container-page">
+    <div
+      class="on-dark relative overflow-hidden rounded-5xl bg-navy-900 px-6 py-12 text-white sm:px-12 sm:py-16"
+      data-reveal
+    >
+      <div
+        aria-hidden="true"
+        class="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand-500/20 blur-2xl"
+      >
+      </div>
+
+      <div class="relative grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+        <div>
+          <span class="pill-label pill-label--dark">Kostenlos &amp; unverbindlich</span>
+          <h2
+            class="mt-5 font-display text-[1.9rem] font-extrabold leading-tight text-white sm:text-4xl lg:text-[2.75rem]"
+          >
+            {headline}
+          </h2>
+          <p class="mt-4 max-w-xl text-[0.95rem] leading-relaxed text-white/70 sm:text-lg">
+            {text}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <a
+            href={site.phone.href}
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-4 text-base font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-brand-600"
+          >
+            <Icon name="phone" class="h-[1.05em] w-[1.05em]" />
+            {site.phone.display}
+          </a>
+          <a
+            href="/#kontakt"
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-white/45 px-7 py-4 text-base font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white/10"
+          >
+            Angebot anfordern
+            <Icon name="arrow-up-right" class="h-[1.05em] w-[1.05em]" />
+          </a>
+          <p class="mt-1 text-center text-sm text-white/60">
+            Mo.–Sa. 7:00–19:00 Uhr
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

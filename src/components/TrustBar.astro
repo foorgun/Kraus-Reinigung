@@ -1,0 +1,34 @@
+---
+import Icon from './Icon.astro';
+import { trustItems } from '@/content/home';
+---
+
+<section aria-label="Unsere Vorteile" class="relative z-10 -mt-8 sm:-mt-10">
+  <div class="container-page">
+    <ul
+      class="grid gap-px overflow-hidden rounded-4xl border border-ink-100 bg-ink-100 shadow-soft sm:grid-cols-2 lg:grid-cols-4"
+    >
+      {
+        trustItems.map((item, i) => (
+          <li
+            class="flex items-start gap-3.5 bg-white p-5 sm:p-6"
+            data-reveal
+            style={`--reveal-delay: ${i * 70}ms`}
+          >
+            <span class="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <Icon name={item.icon} class="h-[22px] w-[22px]" />
+            </span>
+            <span>
+              <span class="block font-display text-[1.0625rem] font-bold text-ink-900">
+                {item.title}
+              </span>
+              <span class="mt-0.5 block text-sm leading-snug text-ink-500">
+                {item.text}
+              </span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

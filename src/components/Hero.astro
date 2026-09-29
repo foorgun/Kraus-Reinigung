@@ -1,0 +1,108 @@
+---
+import Icon from './Icon.astro';
+import { site } from '@/config/site';
+import { hero } from '@/content/home';
+---
+
+<section class="relative isolate overflow-hidden bg-navy-950 on-dark">
+  <!-- Hintergrundbild -->
+  <img
+    src={hero.image.src}
+    alt={hero.image.alt}
+    width="1920"
+    height="1080"
+    fetchpriority="high"
+    decoding="async"
+    class="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+  />
+
+  <!-- Dunkles Overlay für Lesbarkeit / Kontrast -->
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 -z-10 bg-gradient-to-b from-navy-950/85 via-navy-950/70 to-navy-950/92"
+  >
+  </div>
+  <div
+    aria-hidden="true"
+    class="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/85 via-navy-950/40 to-transparent"
+  >
+  </div>
+
+  <div class="container-page relative pb-16 pt-32 sm:pb-20 sm:pt-36 lg:pb-28 lg:pt-44">
+    <div class="grid items-end gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+      <!-- Textspalte -->
+      <div class="max-w-3xl">
+        <span class="pill-label pill-label--dark" data-reveal>
+          {site.tagline}
+        </span>
+
+        <h1
+          class="mt-6 font-display text-[2.6rem] font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-[4.5rem]"
+          data-reveal
+          style="--reveal-delay: 80ms"
+        >
+          {hero.headline.before}<span class="text-brand-400"
+            >{hero.headline.highlight}</span
+          >{hero.headline.after}
+        </h1>
+
+        <p
+          class="mt-6 max-w-xl text-lg leading-relaxed text-white/75 sm:text-xl"
+          data-reveal
+          style="--reveal-delay: 160ms"
+        >
+          {hero.text}
+        </p>
+
+        <div
+          class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
+          data-reveal
+          style="--reveal-delay: 240ms"
+        >
+          <a
+            href={hero.primaryCta.href}
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-4 text-base font-semibold text-white shadow-pill transition duration-300 hover:-translate-y-0.5 hover:bg-brand-600"
+          >
+            {hero.primaryCta.label}
+            <Icon name="arrow-up-right" class="h-[1.05em] w-[1.05em]" />
+          </a>
+          <a
+            href={site.phone.href}
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-white/45 px-7 py-4 text-base font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white/10"
+            aria-label={`Jetzt anrufen: ${site.phone.display}`}
+          >
+            <Icon name="phone" class="h-[1.05em] w-[1.05em]" />
+            {hero.secondaryCta.label}
+          </a>
+          <span class="mt-1 text-sm text-white/55 sm:ml-2 sm:mt-0">
+            {site.phone.display} · Mo.–Sa. 7–19 Uhr
+          </span>
+        </div>
+      </div>
+
+      <!-- Glassmorphism-Teaser -->
+      <div class="flex flex-col gap-3" data-reveal style="--reveal-delay: 320ms">
+        {
+          hero.teasers.map((teaser) => (
+            <a
+              href={teaser.href}
+              class="group glass-card flex items-center gap-4 rounded-3xl p-4 transition duration-300 hover:-translate-y-0.5 hover:bg-white/18"
+            >
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-[1.0625rem] font-bold text-white">
+                  {teaser.title}
+                </span>
+                <span class="mt-1 block text-sm leading-snug text-white/65">
+                  {teaser.text}
+                </span>
+              </span>
+              <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/25 bg-white/10 text-white transition duration-300 group-hover:bg-brand-500 group-hover:border-brand-500">
+                <Icon name="arrow-up-right" class="h-[18px] w-[18px]" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

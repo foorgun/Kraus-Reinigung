@@ -1,0 +1,55 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { guarantees, guaranteesSection } from '@/content/guarantees';
+---
+
+<section id="garantien" class="scroll-mt-28 py-20 sm:py-28">
+  <div class="container-page">
+    <SectionHeading
+      label={guaranteesSection.label}
+      headline={guaranteesSection.headline}
+      highlight="der Schutz hält"
+      text={guaranteesSection.text}
+      class="max-w-2xl"
+      data-reveal
+    />
+
+    <!-- TODO: echte Daten vom Kunden – Garantiewerte schriftlich bestätigen lassen -->
+    <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        guarantees.map((g, i) => (
+          <li
+            class="flex flex-col gap-3 rounded-4xl border border-ink-100 bg-white p-6 shadow-soft hover-lift"
+            data-reveal
+            style={`--reveal-delay: ${i * 60}ms`}
+          >
+            <span class="grid h-11 w-11 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+              <Icon name="shield" class="h-[22px] w-[22px]" />
+            </span>
+            <h3 class="font-display text-[1.0625rem] font-bold text-ink-900">
+              {g.service}
+            </h3>
+            <p class="font-display text-2xl font-extrabold text-brand-500">
+              {g.duration}
+            </p>
+            {g.note && !g.note.startsWith('[PRÜFEN') && (
+              <p class="text-sm leading-snug text-ink-500">{g.note}</p>
+            )}
+            {g.note && g.note.startsWith('[PRÜFEN') && (
+              <p class="rounded-xl bg-amber-50 px-3 py-2 text-xs leading-snug text-amber-900">
+                {g.note}
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-8 max-w-3xl text-sm leading-relaxed text-ink-500">
+      Die angegebenen Zeiträume beziehen sich auf fachgerechte Ausführung und
+      normale Witterungsbedingungen. Die für Ihr Objekt gültige Dauer halten wir
+      im Angebot schriftlich fest.
+    </p>
+  </div>
+</section>

@@ -1,0 +1,92 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import ServiceCard from '@/components/ServiceCard.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import ContactSection from '@/components/ContactSection.astro';
+import Icon from '@/components/Icon.astro';
+import { serviceCategories } from '@/content/services';
+import { breadcrumbSchema } from '@/lib/schema';
+
+const origin = Astro.site ? Astro.site.origin : '';
+---
+
+<BaseLayout
+  title="Leistungen – Reinigung, Sanierung & Pflasterarbeiten | KRAUS"
+  description="Alle Leistungen von KRAUS im Überblick: Dachreinigung, Fassadenreinigung, Steinreinigung, Sanierung, Malerarbeiten, Pflasterarbeiten und Gartengestaltung. Bad Hersfeld, Hessen und bundesweit."
+  schemas={[
+    breadcrumbSchema(origin, [
+      { name: 'Startseite', href: '/' },
+      { name: 'Leistungen', href: '/leistungen' },
+    ]),
+  ]}
+>
+  <section class="pb-8 pt-32 sm:pt-40">
+    <div class="container-page">
+      <nav aria-label="Brotkrumennavigation" class="mb-7">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-ink-400">
+          <li><a href="/" class="transition hover:text-ink-700">Startseite</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-ink-700" aria-current="page">Leistungen</li>
+        </ol>
+      </nav>
+
+      <SectionHeading
+        label="Leistungen"
+        headline="Reinigen, sanieren, gestalten – alles aus einer Hand"
+        highlight="alles aus einer Hand"
+        text="Vier Bereiche, ein Ansprechpartner. Wählen Sie einen Bereich für alle Details, oder fragen Sie einfach direkt an."
+        as="h1"
+        class="max-w-3xl"
+        data-reveal
+      />
+    </div>
+  </section>
+
+  <section class="py-12 sm:py-16">
+    <div class="container-page">
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          serviceCategories.map((category, i) => (
+            <ServiceCard category={category} index={i} as="h2" />
+          ))
+        }
+      </div>
+
+      <!-- Vollständige Leistungsliste für Überblick und Suchmaschinen -->
+      <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          serviceCategories.map((category, i) => (
+            <div data-reveal style={`--reveal-delay: ${i * 70}ms`}>
+              <h3 class="font-display text-base font-bold text-ink-900">
+                {category.title}
+              </h3>
+              <ul class="mt-3 flex flex-col gap-2">
+                {category.services.map((service) => (
+                  <li class="flex items-start gap-2 text-[0.9375rem] text-ink-500">
+                    <Icon
+                      name="check"
+                      class="mt-1 h-3.5 w-3.5 shrink-0 text-brand-500"
+                      stroke={2.6}
+                    />
+                    {service.name}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={category.href}
+                class="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition hover:text-brand-700"
+              >
+                Zur Übersicht
+                <Icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
+              </a>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+  <ContactSection />
+</BaseLayout>

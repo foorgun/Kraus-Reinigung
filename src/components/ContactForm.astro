@@ -1,0 +1,410 @@
+---
+import Icon from './Icon.astro';
+import { serviceCheckboxGroups } from '@/content/services';
+import { site } from '@/config/site';
+
+/**
+ * Kontaktformular.
+ *
+ * Sendet ein JSON-POST an die in `PUBLIC_FORM_WEBHOOK_URL` hinterlegte URL
+ * (z. B. ein n8n-Webhook). Ohne gesetzte Variable wird das Formular als
+ * nicht konfiguriert markiert und der Absenden-Versuch zeigt einen Hinweis –
+ * so gehen keine Anfragen stillschweigend verloren.
+ *
+ * Spam-Schutz ohne Cookies und ohne externe Dienste:
+ *   1. Honeypot-Feld "website" (für Menschen unsichtbar)
+ *   2. Mindest-Ausfüllzeit (Bots senden typischerweise sofort ab)
+ *
+ * ⚠️ WICHTIG – CORS:
+ * Der Webhook wird aus dem Browser heraus aufgerufen. Er muss daher CORS
+ * erlauben, sonst blockiert der Browser den Versand:
+ *   Access-Control-Allow-Origin:  https://<ihre-domain>
+ *   Access-Control-Allow-Methods: POST, OPTIONS
+ *   Access-Control-Allow-Headers: Content-Type
+ * Die OPTIONS-Vorabanfrage muss mit Status 204 beantwortet werden.
+ * In n8n: im Webhook-Node unter "Options" → "Allowed Origins (CORS)".
+ *
+ * Schlägt der Versand trotzdem fehl, bietet das Formular automatisch einen
+ * vorausgefüllten E-Mail- und Telefon-Fallback an, damit keine Anfrage
+ * verloren geht.
+ */
+const webhookUrl = import.meta.env.PUBLIC_FORM_WEBHOOK_URL ?? '';
+
+const inputClass =
+  'w-full rounded-2xl border border-ink-200 bg-white px-4 py-3.5 text-[0.95rem] text-ink-900 placeholder:text-ink-300 transition focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 aria-[invalid=true]:border-red-500 aria-[invalid=true]:ring-red-500/15';
+const labelClass = 'mb-2 block text-sm font-semibold text-ink-800';
+const errorClass = 'mt-1.5 hidden text-sm font-medium text-red-600';
+---
+
+<form
+  id="anfrage-formular"
+  novalidate
+  data-webhook={webhookUrl}
+  data-email={site.email}
+  class="flex flex-col gap-5"
+  aria-describedby="form-status"
+>
+  <!-- Honeypot: für Menschen unsichtbar, für Bots verlockend -->
+  <div class="absolute h-0 w-0 overflow-hidden" aria-hidden="true">
+    <label for="website">Bitte dieses Feld leer lassen</label>
+    <input
+      type="text"
+      id="website"
+      name="website"
+      tabindex="-1"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label class={labelClass} for="name">
+        Name <span class="text-brand-600" aria-hidden="true">*</span>
+      </label>
+      <input
+        class={inputClass}
+        type="text"
+        id="name"
+        name="name"
+        required
+        autocomplete="name"
+        placeholder="Vor- und Nachname"
+      />
+      <p class={errorClass} id="error-name" data-error-for="name"></p>
+    </div>
+
+    <div>
+      <label class={labelClass} for="telefon">
+        Telefon <span class="text-brand-600" aria-hidden="true">*</span>
+      </label>
+      <input
+        class={inputClass}
+        type="tel"
+        id="telefon"
+        name="telefon"
+        required
+        autocomplete="tel"
+        inputmode="tel"
+        placeholder="z. B. 0172 1234567"
+      />
+      <p class={errorClass} id="error-telefon" data-error-for="telefon"></p>
+    </div>
+
+    <div>
+      <label class={labelClass} for="email">E-Mail</label>
+      <input
+        class={inputClass}
+        type="email"
+        id="email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        placeholder="name@beispiel.de"
+      />
+      <p class={errorClass} id="error-email" data-error-for="email"></p>
+    </div>
+
+    <div>
+      <label class={labelClass} for="ort">
+        PLZ / Ort <span class="text-brand-600" aria-hidden="true">*</span>
+      </label>
+      <input
+        class={inputClass}
+        type="text"
+        id="ort"
+        name="ort"
+        required
+        autocomplete="postal-code"
+        placeholder="36251 Bad Hersfeld"
+      />
+      <p class={errorClass} id="error-ort" data-error-for="ort"></p>
+    </div>
+  </div>
+
+  <!-- Gewünschte Leistungen -->
+  <fieldset>
+    <legend class={labelClass}>
+      Gewünschte Leistungen{' '}
+      <span class="font-normal text-ink-400">(Mehrfachauswahl möglich)</span>
+    </legend>
+
+    <div class="flex flex-col gap-4 rounded-3xl border border-ink-100 bg-ink-50/60 p-4 sm:p-5">
+      {
+        serviceCheckboxGroups.map((group) => (
+          <div>
+            <p class="mb-2 text-xs font-bold uppercase tracking-wider text-ink-400">
+              {group.label}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              {group.options.map((option) => (
+                <label class="group cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="leistungen"
+                    value={option}
+                    class="peer sr-only"
+                  />
+                  <span class="inline-flex items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3.5 py-2 text-sm font-medium text-ink-600 transition peer-checked:border-brand-500 peer-checked:bg-brand-500 peer-checked:text-white peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-600 group-hover:border-ink-300">
+                    {option}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <div>
+    <label class={labelClass} for="nachricht">Ihre Nachricht</label>
+    <textarea
+      class={`${inputClass} min-h-[8rem] resize-y`}
+      id="nachricht"
+      name="nachricht"
+      rows="5"
+      placeholder="Was soll gemacht werden? Wie groß ist die Fläche ungefähr? Gibt es einen Wunschtermin?"></textarea>
+    <p class={errorClass} id="error-nachricht" data-error-for="nachricht"></p>
+  </div>
+
+  <!-- Hinweis statt echtem Upload: kein Datei-Handling ohne Server -->
+  <p
+    class="flex items-start gap-3 rounded-2xl border border-ink-100 bg-ink-50 px-4 py-3.5 text-sm leading-relaxed text-ink-500"
+  >
+    <Icon name="mail" class="mt-0.5 h-[18px] w-[18px] shrink-0 text-brand-500" />
+    <span>
+      <strong class="font-semibold text-ink-700">Fotos helfen uns weiter.</strong>{' '}
+      Schicken Sie uns gerne Bilder der Fläche per WhatsApp oder E-Mail – dann können
+      wir oft schon vorab einschätzen, was nötig ist.
+    </span>
+  </p>
+
+  <!-- DSGVO -->
+  <div>
+    <label class="flex cursor-pointer items-start gap-3">
+      <input
+        type="checkbox"
+        id="datenschutz"
+        name="datenschutz"
+        required
+        class="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded-md border-ink-300 text-brand-500 accent-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      />
+      <span class="text-sm leading-relaxed text-ink-500">
+        Ich habe die <a
+          href="/datenschutz"
+          class="font-semibold text-brand-600 underline underline-offset-2 hover:text-brand-700"
+          >Datenschutzerklärung</a
+        > gelesen und bin damit einverstanden, dass meine Angaben zur Bearbeitung
+        meiner Anfrage verarbeitet werden.{' '}
+        <span class="text-brand-600" aria-hidden="true">*</span>
+      </span>
+    </label>
+    <p class={errorClass} id="error-datenschutz" data-error-for="datenschutz"></p>
+  </div>
+
+  <button
+    type="submit"
+    id="form-submit"
+    class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-4 text-base font-semibold text-white shadow-pill transition duration-300 hover:-translate-y-0.5 hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+  >
+    <span data-submit-label>Anfrage absenden</span>
+    <Icon name="arrow-up-right" class="h-[1.05em] w-[1.05em]" />
+  </button>
+
+  <p class="text-xs leading-relaxed text-ink-400">
+    Pflichtfelder sind mit <span class="text-brand-600">*</span> gekennzeichnet.
+    Ihre Anfrage ist kostenlos und unverbindlich.
+  </p>
+
+  <!-- Statusmeldung (Erfolg / Fehler) -->
+  <div
+    id="form-status"
+    role="status"
+    aria-live="polite"
+    class="hidden rounded-2xl px-5 py-4 text-[0.95rem] leading-relaxed"
+  >
+  </div>
+</form>
+
+<script>
+  const form = document.getElementById('anfrage-formular') as HTMLFormElement | null;
+
+  if (form) {
+    const status = document.getElementById('form-status')!;
+    const submit = document.getElementById('form-submit') as HTMLButtonElement;
+    const submitLabel = submit.querySelector('[data-submit-label]')!;
+    const webhook = form.dataset.webhook ?? '';
+
+    // Zeitpunkt des Ladens – Bots senden meist in unter 3 Sekunden ab
+    const renderedAt = Date.now();
+
+    type FieldName = 'name' | 'telefon' | 'email' | 'ort' | 'datenschutz';
+
+    const messages: Record<FieldName, (v: string, el: HTMLInputElement) => string> = {
+      name: (v) =>
+        v.trim().length < 2 ? 'Bitte geben Sie Ihren Namen an.' : '',
+      telefon: (v) =>
+        v.replace(/[^\d]/g, '').length < 6
+          ? 'Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen.'
+          : '',
+      email: (v) =>
+        v.trim() !== '' && !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(v.trim())
+          ? 'Diese E-Mail-Adresse sieht nicht vollständig aus.'
+          : '',
+      ort: (v) =>
+        v.trim().length < 3 ? 'Bitte geben Sie PLZ oder Ort an.' : '',
+      datenschutz: (_v, el) =>
+        el.checked ? '' : 'Bitte stimmen Sie der Datenschutzerklärung zu.',
+    };
+
+    const showError = (name: string, message: string) => {
+      const field = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      const errorEl = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+      if (!field || !errorEl) return;
+
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', `error-${name}`);
+      } else {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      }
+    };
+
+    const validateField = (name: FieldName) => {
+      const field = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (!field) return true;
+      const message = messages[name](field.value, field);
+      showError(name, message);
+      return message === '';
+    };
+
+    // Beim Verlassen eines Feldes prüfen – nicht schon beim Tippen
+    (Object.keys(messages) as FieldName[]).forEach((name) => {
+      const field = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      field?.addEventListener('blur', () => validateField(name));
+      field?.addEventListener('change', () => validateField(name));
+    });
+
+    const setStatus = (kind: 'success' | 'error' | 'info', html: string) => {
+      const styles = {
+        success: 'bg-brand-50 text-brand-800 border border-brand-200',
+        error: 'bg-red-50 text-red-800 border border-red-200',
+        info: 'bg-ink-50 text-ink-700 border border-ink-200',
+      };
+      status.className = `rounded-2xl px-5 py-4 text-[0.95rem] leading-relaxed ${styles[kind]}`;
+      status.innerHTML = html;
+      status.classList.remove('hidden');
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      // 1. Honeypot
+      const honeypot = form.querySelector<HTMLInputElement>('[name="website"]');
+      if (honeypot && honeypot.value.trim() !== '') return;
+
+      // 2. Mindest-Ausfüllzeit
+      if (Date.now() - renderedAt < 2500) {
+        setStatus(
+          'error',
+          'Das ging sehr schnell. Bitte prüfen Sie Ihre Angaben und senden Sie noch einmal.'
+        );
+        return;
+      }
+
+      // 3. Validierung
+      const fields: FieldName[] = ['name', 'telefon', 'email', 'ort', 'datenschutz'];
+      const results = fields.map(validateField);
+
+      if (results.includes(false)) {
+        setStatus('error', 'Bitte prüfen Sie die rot markierten Felder.');
+        form
+          .querySelector<HTMLElement>('[aria-invalid="true"]')
+          ?.focus({ preventScroll: false });
+        return;
+      }
+
+      if (!webhook) {
+        setStatus(
+          'error',
+          'Das Formular ist noch nicht konfiguriert (PUBLIC_FORM_WEBHOOK_URL fehlt). Bitte rufen Sie uns an: <a class="font-semibold underline" href="tel:+491727821700">0172 / 7821 700</a>.'
+        );
+        return;
+      }
+
+      // 4. Absenden
+      const data = new FormData(form);
+      const payload = {
+        name: String(data.get('name') ?? '').trim(),
+        telefon: String(data.get('telefon') ?? '').trim(),
+        email: String(data.get('email') ?? '').trim(),
+        ort: String(data.get('ort') ?? '').trim(),
+        leistungen: data.getAll('leistungen').map(String),
+        nachricht: String(data.get('nachricht') ?? '').trim(),
+        datenschutz: data.get('datenschutz') === 'on',
+        quelle: window.location.href,
+        gesendetAm: new Date().toISOString(),
+      };
+
+      submit.disabled = true;
+      submitLabel.textContent = 'Wird gesendet …';
+      setStatus('info', 'Ihre Anfrage wird übermittelt …');
+
+      try {
+        const response = await fetch(webhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        form.reset();
+        setStatus(
+          'success',
+          '<strong class="font-semibold">Vielen Dank!</strong> Ihre Anfrage ist bei uns eingegangen. Wir melden uns zeitnah bei Ihnen – in der Regel noch am selben Werktag.'
+        );
+        submitLabel.textContent = 'Anfrage gesendet';
+        status.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (error) {
+        console.error('Formularversand fehlgeschlagen:', error);
+
+        // Fallback, damit keine Anfrage verloren geht: Inhalte in eine
+        // vorausgefüllte E-Mail übernehmen und Telefonnummer anbieten.
+        const lines = [
+          `Name: ${payload.name}`,
+          `Telefon: ${payload.telefon}`,
+          payload.email ? `E-Mail: ${payload.email}` : '',
+          `PLZ / Ort: ${payload.ort}`,
+          payload.leistungen.length
+            ? `Gewünschte Leistungen: ${payload.leistungen.join(', ')}`
+            : '',
+          '',
+          payload.nachricht,
+        ].filter(Boolean);
+
+        const mailto =
+          `mailto:${form.dataset.email}` +
+          `?subject=${encodeURIComponent('Anfrage über die Website')}` +
+          `&body=${encodeURIComponent(lines.join('\n'))}`;
+
+        setStatus(
+          'error',
+          'Die Anfrage konnte leider nicht übermittelt werden. ' +
+            'Bitte versuchen Sie es erneut – oder senden Sie uns Ihre Angaben direkt:' +
+            '<span class="mt-3 flex flex-wrap gap-2">' +
+            `<a class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white" href="tel:+491727821700">Jetzt anrufen</a>` +
+            `<a class="inline-flex items-center gap-2 rounded-full border border-red-300 px-4 py-2.5 text-sm font-semibold" href="${mailto}">Als E-Mail senden</a>` +
+            '</span>'
+        );
+        submit.disabled = false;
+        submitLabel.textContent = 'Erneut senden';
+      }
+    });
+  }
+</script>

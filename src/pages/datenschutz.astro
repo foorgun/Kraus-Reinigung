@@ -1,0 +1,198 @@
+---
+import LegalLayout from '@/layouts/LegalLayout.astro';
+import { site } from '@/config/site';
+---
+
+<!--
+  DATENSCHUTZERKLÄRUNG – PLATZHALTER
+  TODO: echte Daten vom Kunden / Prüfung durch Rechtsberatung
+
+  Technischer Stand dieser Website (relevant für die Erklärung):
+    - statisch generiert, keine Cookies, kein Tracking, keine Analyse-Tools
+    - keine externen Schriften, keine CDNs, keine eingebetteten Karten/Videos
+    - einzige Datenverarbeitung: Server-Logfiles des Hosters + Kontaktformular
+    - Kontaktformular sendet per HTTPS an eine konfigurierbare Webhook-URL
+      (PUBLIC_FORM_WEBHOOK_URL). Betreiber dieses Dienstes und Serverstandort
+      müssen unten eingetragen werden – bei Anbietern außerhalb der EU ist eine
+      Grundlage für den Drittlandtransfer erforderlich.
+-->
+<LegalLayout
+  title="Datenschutzerklärung | KRAUS"
+  description="Informationen zur Verarbeitung personenbezogener Daten auf der Website von KRAUS."
+  label="Datenschutz"
+  headline="Datenschutzerklärung"
+  updated="[noch nicht veröffentlicht]"
+>
+  <h2>1. Verantwortlicher</h2>
+  <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
+  <address>
+    <span class="platzhalter">[Vollständige Firmierung inkl. Rechtsform]</span><br />
+    <span class="platzhalter">[Vertretungsberechtigte Person]</span><br />
+    {site.address.street}<br />
+    {site.address.postalCode} {site.address.city}<br />
+    Telefon: <a href={site.phone.href}>{site.phone.display}</a><br />
+    E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>
+    <span class="platzhalter">[E-Mail prüfen]</span>
+  </address>
+
+  <h3>Datenschutzbeauftragter</h3>
+  <p>
+    <span class="platzhalter"
+      >[Nur erforderlich, wenn eine Benennungspflicht besteht – andernfalls
+      diesen Abschnitt entfernen.]</span
+    >
+  </p>
+
+  <h2>2. Allgemeines zur Datenverarbeitung</h2>
+  <p>
+    Wir verarbeiten personenbezogene Daten grundsätzlich nur, soweit dies zur
+    Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und
+    Leistungen erforderlich ist. Rechtsgrundlagen sind insbesondere Art. 6 Abs. 1
+    lit. a, b und f DSGVO.
+  </p>
+  <p>
+    Diese Website wird ausschließlich über eine verschlüsselte HTTPS-Verbindung
+    ausgeliefert.
+  </p>
+
+  <h2>3. Keine Cookies, kein Tracking</h2>
+  <p>
+    Diese Website setzt <strong>keine Cookies</strong> zu Analyse-, Marketing-
+    oder Trackingzwecken ein. Es sind keine Webanalyse-Dienste, keine
+    Werbenetzwerke und keine Social-Media-Plugins eingebunden. Ein
+    Cookie-Banner ist daher nicht erforderlich.
+  </p>
+  <p>
+    Schriftarten werden lokal von unserem eigenen Server geladen. Es findet
+    keine Verbindung zu Google Fonts oder anderen externen Content Delivery
+    Networks statt, sodass hierbei keine Daten an Dritte übermittelt werden.
+  </p>
+
+  <h2>4. Server-Logfiles</h2>
+  <p>
+    Beim Aufruf dieser Website erhebt der Hosting-Anbieter automatisch
+    Informationen, die Ihr Browser übermittelt. Dies sind in der Regel:
+  </p>
+  <ul>
+    <li>aufgerufene Seite bzw. Datei</li>
+    <li>Datum und Uhrzeit des Zugriffs</li>
+    <li>übertragene Datenmenge und Meldung über erfolgreichen Abruf</li>
+    <li>Browsertyp und Browserversion</li>
+    <li>verwendetes Betriebssystem</li>
+    <li>Referrer-URL</li>
+    <li>IP-Adresse (je nach Anbieter gekürzt bzw. anonymisiert)</li>
+  </ul>
+  <p>
+    Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Unser
+    berechtigtes Interesse liegt im technisch fehlerfreien Betrieb und in der
+    Sicherheit der Website. Eine Zusammenführung dieser Daten mit anderen
+    Datenquellen findet nicht statt.
+  </p>
+  <p>
+    Speicherdauer: <span class="platzhalter">[Angabe des Hosters, z. B. 7 Tage]</span>
+  </p>
+
+  <h3>Hosting</h3>
+  <p>
+    Diese Website wird gehostet bei:
+    <span class="platzhalter">[Name und Anschrift des Hosting-Anbieters, z. B. Netlify bzw. Vercel]</span>.
+    Mit dem Anbieter besteht ein Vertrag zur Auftragsverarbeitung gemäß Art. 28
+    DSGVO: <span class="platzhalter">[bestätigen / Link ergänzen]</span>.
+    <span class="platzhalter"
+      >[Bei Anbietern mit Serverstandort außerhalb der EU/des EWR ist die
+      Grundlage des Drittlandtransfers anzugeben, z. B. EU-Standardvertrags-
+      klauseln oder EU-US Data Privacy Framework.]</span
+    >
+  </p>
+
+  <h2>5. Kontaktformular</h2>
+  <p>
+    Wenn Sie uns über das Formular auf dieser Website eine Anfrage senden,
+    werden die von Ihnen eingegebenen Daten verarbeitet. Dazu gehören:
+  </p>
+  <ul>
+    <li>Name (Pflichtangabe)</li>
+    <li>Telefonnummer (Pflichtangabe)</li>
+    <li>E-Mail-Adresse (freiwillig)</li>
+    <li>Postleitzahl bzw. Ort (Pflichtangabe)</li>
+    <li>ausgewählte Leistungen</li>
+    <li>Ihre Nachricht</li>
+    <li>Zeitpunkt der Absendung und die Seite, von der die Anfrage stammt</li>
+  </ul>
+  <p>
+    Zweck der Verarbeitung ist ausschließlich die Bearbeitung Ihrer Anfrage
+    sowie die Kontaktaufnahme mit Ihnen. Rechtsgrundlage ist Art. 6 Abs. 1
+    lit. b DSGVO (Durchführung vorvertraglicher Maßnahmen) sowie Ihre
+    Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO, die Sie beim Absenden des
+    Formulars erteilen. Sie können diese Einwilligung jederzeit mit Wirkung für
+    die Zukunft widerrufen.
+  </p>
+  <p>
+    Die Formularinhalte werden per verschlüsselter Verbindung an unser
+    Anfragen-Postfach übermittelt. Eingesetzter Dienst:
+    <span class="platzhalter"
+      >[Name und Anschrift des Empfangsdienstes, z. B. n8n-Instanz inkl.
+      Serverstandort; ggf. Auftragsverarbeitungsvertrag und Grundlage eines
+      Drittlandtransfers ergänzen]</span
+    >.
+  </p>
+  <p>
+    Speicherdauer: Wir speichern Ihre Anfrage, bis der Zweck der Speicherung
+    entfällt, also die Bearbeitung abgeschlossen ist – längstens jedoch
+    <span class="platzhalter">[Zeitraum angeben]</span>. Gesetzliche
+    Aufbewahrungsfristen, insbesondere handels- und steuerrechtliche, bleiben
+    unberührt.
+  </p>
+
+  <h3>Spam-Schutz</h3>
+  <p>
+    Zum Schutz vor automatisierten Eingaben enthält das Formular ein für
+    Besucherinnen und Besucher unsichtbares Zusatzfeld sowie eine Prüfung der
+    Ausfülldauer. Dabei werden keine personenbezogenen Daten an Dritte
+    übermittelt und keine Cookies gesetzt.
+  </p>
+
+  <h2>6. Kontaktaufnahme per Telefon oder E-Mail</h2>
+  <p>
+    Wenn Sie uns telefonisch oder per E-Mail kontaktieren, werden Ihre Angaben
+    zur Bearbeitung des Anliegens und für den Fall von Anschlussfragen bei uns
+    gespeichert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO.
+  </p>
+
+  <h2>7. Empfänger der Daten</h2>
+  <p>
+    Eine Weitergabe Ihrer Daten an Dritte erfolgt nur, soweit dies zur
+    Vertragserfüllung erforderlich ist, Sie eingewilligt haben oder eine
+    gesetzliche Verpflichtung besteht. Dienstleister, die in unserem Auftrag
+    Daten verarbeiten (Hosting, Formularempfang), sind vertraglich nach Art. 28
+    DSGVO gebunden.
+  </p>
+
+  <h2>8. Ihre Rechte</h2>
+  <p>Sie haben jederzeit das Recht auf:</p>
+  <ul>
+    <li>Auskunft über die zu Ihrer Person gespeicherten Daten (Art. 15 DSGVO)</li>
+    <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO)</li>
+    <li>Löschung (Art. 17 DSGVO)</li>
+    <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+    <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+    <li>Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
+    <li>Widerruf einer erteilten Einwilligung (Art. 7 Abs. 3 DSGVO)</li>
+  </ul>
+  <p>
+    Wenden Sie sich dafür an die oben genannten Kontaktdaten. Außerdem steht
+    Ihnen ein Beschwerderecht bei einer Datenschutz-Aufsichtsbehörde zu. Für
+    Hessen ist dies:
+    <span class="platzhalter"
+      >[Der Hessische Beauftragte für Datenschutz und Informationsfreiheit,
+      Anschrift ergänzen]</span
+    >
+  </p>
+
+  <h2>9. Änderungen dieser Datenschutzerklärung</h2>
+  <p>
+    Wir passen diese Datenschutzerklärung an, sobald Änderungen an der Website
+    oder an der Datenverarbeitung dies erforderlich machen. Es gilt jeweils die
+    auf dieser Seite veröffentlichte Fassung.
+  </p>
+</LegalLayout>

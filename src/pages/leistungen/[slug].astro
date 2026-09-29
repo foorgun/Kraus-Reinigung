@@ -1,0 +1,257 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SectionHeading from '@/components/SectionHeading.astro';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider.astro';
+import ContactSection from '@/components/ContactSection.astro';
+import CtaBand from '@/components/CtaBand.astro';
+import Icon from '@/components/Icon.astro';
+import { serviceCategories } from '@/content/services';
+import { beforeAfterPairs } from '@/content/beforeAfter';
+import { site } from '@/config/site';
+import { serviceSchema, breadcrumbSchema } from '@/lib/schema';
+
+export function getStaticPaths() {
+  return serviceCategories.map((category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+const origin = Astro.site ? Astro.site.origin : '';
+
+// Passendes Vorher/Nachher-Paar zur Kategorie (siehe beforeAfterId)
+const pair =
+  beforeAfterPairs.find((p) => p.id === category.beforeAfterId) ??
+  beforeAfterPairs[0];
+
+const others = serviceCategories.filter((c) => c.slug !== category.slug);
+
+const schemas = [
+  serviceSchema(origin, category.slug),
+  breadcrumbSchema(origin, [
+    { name: 'Startseite', href: '/' },
+    { name: 'Leistungen', href: '/leistungen' },
+    { name: category.title, href: category.href },
+  ]),
+].filter(Boolean) as Record<string, unknown>[];
+---
+
+<BaseLayout
+  title={category.seo.title}
+  description={category.seo.description}
+  schemas={schemas}
+>
+  <!-- Hero -->
+  <section class="on-dark relative isolate overflow-hidden bg-navy-950">
+    <img
+      src={category.heroImage}
+      alt={category.heroImageAlt}
+      width="1920"
+      height="1080"
+      fetchpriority="high"
+      decoding="async"
+      class="absolute inset-0 -z-20 h-full w-full object-cover"
+    />
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 -z-10 bg-gradient-to-br from-navy-950/92 via-navy-950/80 to-navy-950/65"
+    >
+    </div>
+
+    <div class="container-page relative pb-16 pt-32 sm:pb-24 sm:pt-40 lg:pb-28 lg:pt-44">
+      <!-- Brotkrumen -->
+      <nav aria-label="Brotkrumennavigation" class="mb-7">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-white/55">
+          <li><a href="/" class="transition hover:text-white">Startseite</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/leistungen" class="transition hover:text-white">Leistungen</a></li>
+          <li aria-hidden="true">/</li>
+          <li class="text-white/90" aria-current="page">{category.title}</li>
+        </ol>
+      </nav>
+
+      <div class="max-w-3xl">
+        <SectionHeading
+          label={category.hero.eyebrow}
+          headline={category.hero.headline}
+          highlight={category.hero.highlight}
+          text={category.hero.text}
+          dark
+          as="h1"
+          data-reveal
+        />
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" data-reveal style="--reveal-delay: 120ms">
+          <a
+            href="/#kontakt"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-4 font-semibold text-white shadow-pill transition duration-300 hover:-translate-y-0.5 hover:bg-brand-600"
+          >
+            Kostenloses Angebot anfordern
+            <Icon name="arrow-up-right" class="h-[1.05em] w-[1.05em]" />
+          </a>
+          <a
+            href={site.phone.href}
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-white/45 px-7 py-4 font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white/10"
+          >
+            <Icon name="phone" class="h-[1.05em] w-[1.05em]" />
+            {site.phone.display}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leistungsliste -->
+  <section class="py-20 sm:py-28">
+    <div class="container-page">
+      <SectionHeading
+        label="Im Detail"
+        headline={`Was wir im Bereich ${category.shortTitle} für Sie machen`}
+        highlight={category.shortTitle}
+        text={category.intro}
+        class="max-w-2xl"
+        data-reveal
+      />
+
+      <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          category.services.map((service, i) => (
+            <li
+              class="flex flex-col gap-2.5 rounded-4xl border border-ink-100 bg-white p-6 shadow-soft hover-lift"
+              data-reveal
+              style={`--reveal-delay: ${(i % 3) * 70}ms`}
+            >
+              <span class="grid h-10 w-10 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+                <Icon name="check" class="h-5 w-5" stroke={2.4} />
+              </span>
+              <h3 class="font-display text-[1.0625rem] font-bold text-ink-900">
+                {service.name}
+              </h3>
+              <p class="text-[0.9375rem] leading-relaxed text-ink-500">
+                {service.text}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Ablauf in 3 Schritten -->
+  <section class="on-dark bg-navy-900 py-20 text-white sm:py-28">
+    <div class="container-page">
+      <SectionHeading
+        label="Ablauf"
+        headline="In drei Schritten zum Ergebnis"
+        highlight="drei Schritten"
+        text="Transparent von der ersten Anfrage bis zur Übergabe."
+        dark
+        class="max-w-2xl"
+        data-reveal
+      />
+
+      <ol class="mt-12 grid gap-6 lg:grid-cols-3">
+        {
+          category.steps.map((step, i) => (
+            <li
+              class="relative rounded-4xl border border-white/10 bg-white/[0.04] p-7"
+              data-reveal
+              style={`--reveal-delay: ${i * 90}ms`}
+            >
+              <span class="font-display text-5xl font-extrabold text-brand-400/35">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="mt-3 font-display text-xl font-bold text-white">
+                {step.title}
+              </h3>
+              <p class="mt-2.5 text-[0.95rem] leading-relaxed text-white/65">
+                {step.text}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Vorher / Nachher -->
+  {
+    pair && (
+      <section class="py-20 sm:py-28">
+        <div class="container-page">
+          <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-center lg:gap-14">
+            <div data-reveal>
+              <BeforeAfterSlider pair={pair} />
+            </div>
+            <div data-reveal style="--reveal-delay: 100ms">
+              <SectionHeading
+                label="Vorher / Nachher"
+                headline="Das Ergebnis sehen Sie sofort"
+                highlight="sofort"
+                text={category.beforeAfterCaption}
+              />
+              <p class="mt-5 text-[0.95rem] leading-relaxed text-ink-500">
+                Auf Wunsch reinigen wir bei Ihnen vor Ort kostenlos eine
+                Probefläche. So sehen Sie das Ergebnis am eigenen Objekt,
+                bevor Sie sich entscheiden.
+              </p>
+              <a
+                href="/#kontakt"
+                class="group mt-6 inline-flex items-center gap-2 font-semibold text-brand-600 transition hover:text-brand-700"
+              >
+                Kostenlose Probefläche anfragen
+                <Icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Weitere Leistungsbereiche -->
+  <section class="bg-ink-50 py-20 sm:py-28">
+    <div class="container-page">
+      <SectionHeading
+        label="Weitere Bereiche"
+        headline="Wir machen mehr als nur das"
+        highlight="mehr"
+        class="max-w-2xl"
+        data-reveal
+      />
+
+      <div class="mt-10 grid gap-4 sm:grid-cols-3">
+        {
+          others.map((other, i) => (
+            <a
+              href={other.href}
+              class="group flex items-center justify-between gap-4 rounded-3xl border border-ink-100 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-lift"
+              data-reveal
+              style={`--reveal-delay: ${i * 70}ms`}
+            >
+              <span>
+                <span class="block font-display text-lg font-bold text-ink-900">
+                  {other.title}
+                </span>
+                <span class="mt-1.5 block text-sm leading-snug text-ink-500">
+                  {other.teaser}
+                </span>
+              </span>
+              <span class="arrow-button shrink-0">
+                <Icon name="arrow-up-right" class="h-5 w-5" stroke={2} />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    headline={`${category.shortTitle}: Jetzt unverbindlich anfragen`}
+    text="Wir schauen uns die Fläche persönlich an, reinigen auf Wunsch kostenlos eine Probefläche und machen Ihnen ein festes Angebot."
+  />
+
+  <ContactSection />
+</BaseLayout>

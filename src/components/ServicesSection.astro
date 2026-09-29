@@ -1,0 +1,37 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import ServiceCard from './ServiceCard.astro';
+import Icon from './Icon.astro';
+import { serviceCategories } from '@/content/services';
+import { servicesSection } from '@/content/home';
+---
+
+<section id="leistungen" class="scroll-mt-28 py-20 sm:py-28">
+  <div class="container-page">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+      <SectionHeading
+        label={servicesSection.label}
+        headline={servicesSection.headline}
+        highlight="Haus, Hof und Garten"
+        text={servicesSection.text}
+        class="max-w-2xl"
+        data-reveal
+      />
+      <a
+        href="/#kontakt"
+        class="group inline-flex shrink-0 items-center gap-2 self-start text-[0.95rem] font-semibold text-brand-600 transition hover:text-brand-700 lg:self-auto"
+      >
+        Leistung nicht dabei? Fragen Sie uns
+        <Icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
+      </a>
+    </div>
+
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+      {
+        serviceCategories.map((category, i) => (
+          <ServiceCard category={category} index={i} />
+        ))
+      }
+    </div>
+  </div>
+</section>

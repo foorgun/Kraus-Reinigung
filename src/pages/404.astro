@@ -1,0 +1,58 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Icon from '@/components/Icon.astro';
+import { site } from '@/config/site';
+import { serviceCategories } from '@/content/services';
+---
+
+<BaseLayout
+  title="Seite nicht gefunden | KRAUS"
+  description="Die aufgerufene Seite existiert nicht. Hier geht es zurück zur Startseite von KRAUS."
+  noindex
+>
+  <section class="py-32 sm:py-40">
+    <div class="container-page">
+      <div class="max-w-2xl">
+        <span class="pill-label">Fehler 404</span>
+        <h1 class="mt-6 font-display text-4xl font-extrabold text-ink-900 sm:text-5xl">
+          Diese Seite gibt es nicht
+        </h1>
+        <p class="mt-4 text-lg leading-relaxed text-ink-500">
+          Vielleicht hat sich die Adresse geändert. Über die Links unten kommen
+          Sie weiter – oder rufen Sie uns einfach an.
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a
+            href="/"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-4 font-semibold text-white shadow-pill transition hover:bg-brand-600"
+          >
+            Zur Startseite
+          </a>
+          <a
+            href={site.phone.href}
+            class="inline-flex items-center justify-center gap-2 rounded-full border border-ink-200 px-7 py-4 font-semibold text-ink-900 transition hover:bg-ink-50"
+          >
+            <Icon name="phone" class="h-[1.05em] w-[1.05em] text-brand-500" />
+            {site.phone.display}
+          </a>
+        </div>
+
+        <ul class="mt-12 flex flex-wrap gap-2">
+          {
+            serviceCategories.map((category) => (
+              <li>
+                <a
+                  href={category.href}
+                  class="inline-flex rounded-full border border-ink-200 px-4 py-2 text-sm font-medium text-ink-600 transition hover:border-brand-300 hover:text-brand-600"
+                >
+                  {category.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
